@@ -1,0 +1,71 @@
+#!/usr/bin/make -f
+
+STRIP =strip
+ifneq (,$(findstring nostrip,$(DEB_BUILD_OPTIONS)))
+  STRIP =: nostrip
+endif
+
+DIR =$(shell pwd)/debian/daemontools
+
+configure: deb-checkdir configure-stamp
+configure-stamp:
+	rm -f debian/gcc/gcc
+	sed -e "s}/usr/bin/gcc}`which gcc`}" \
+	  <debian/gcc/gcc.tpl >debian/gcc/gcc
+	chmod 555 debian/gcc/gcc
+	rm -f debian/gcc/cc
+	ln -s gcc debian/gcc/cc
+	touch configure-stamp
+
+build: deb-checkdir build-stamp
+build-stamp: configure-stamp
+	touch build-stamp
+
+clean: deb-checkdir deb-checkuid
+	rm -rf admin
+	rm -f build-stamp configure-stamp
+	rm -rf '$(DIR)'
+	rm -f debian/gcc/cc
+	rm -f debian/files changelog
+
+install: deb-checkdir deb-checkuid build-stamp
+	rm -rf '$(DIR)'
+	install -d -m0755 debian/daemontools/package
+	chmod 1755 debian/daemontools/package
+	install -d -m0755 debian/daemontools/command
+	install -d -m0755 debian/daemontools/usr/local/bin
+	tar xzf daemontools-0.76.tar.gz -C debian/daemontools/package
+	PATH='$(DIR)/../gcc:$(PATH)' sh -c '\
+	cd debian/daemontools/package/admin/daemontools-0.76 && \
+	package/compile && \
+	echo '/package/admin/daemontools-0.76' > compile/home && \
+	rm -f compile/src && \
+	ln -s /package/admin/daemontools-0.76/src compile/src'
+	# links
+	for i in \
+	 `cat '$(DIR)'/package/admin/daemontools-0.76/package/commands`; do \
+	  ln -s /package/admin/daemontools/command/$$i '$(DIR)'/command/$$i \
+	    || exit 1; \
+	  ln -s /command/$$i '$(DIR)'/usr/local/bin/$$i || exit 1; \
+	done
+	for i in envdir envuidgid fghack multilog pgrphack readproctitle \
+	 setlock setuidgid softlimit supervise svc svok svscan svstat tai64n \
+	 tai64nlocal; do \
+	  $(STRIP) -R .comment -R .note \
+	    '$(DIR)'/package/admin/daemontools-0.76/command/$$i || exit 1; \
+	done
+	# changelog
+	rm -f changelog && \
+	  ln -s '$(DIR)'/package/admin/daemontools-0.76/src/CHANGES changelog
+
+binary-indep:
+
+binary-arch: install daemontools.deb
+	dpkg-gencontrol -isp -pdaemontools -P'$(DIR)'
+	dpkg -b '$(DIR)' ..
+
+binary: binary-indep binary-arch
+
+.PHONY: configure build clean install binary-indep binary-arch binary
+
+include debian/implicit

@@ -1,0 +1,111 @@
+daemontools (0.76-zarge1) sarge; urgency=low
+
+  * debian/copyright: typo.
+  * debian/daemontools.postinst, debian/daemontools.postrm: minor cleanup.
+  * debian/implicit: update to revision 1.10.
+  * debian/rules: minor cleanup.
+
+ -- Gerrit Pape <pape@smarden.org>  Sun, 15 Aug 2004 16:13:06 +0000
+
+daemontools (0.76-zarge0.3) sarge; urgency=low
+
+  * debian/rules: stop using debhelper, use implicit rules.
+  * debian/implicit: new; implicit Makefile rules.
+  * debian/postinst, debian/postrm: simplify; rename to debian/daemontools.*.
+  * debian/docs, debian/dirs: remove; obsolete.
+  * debian/README.Debian: rename to debian/daemontools.README.Debian.
+  * debian/control: no longer Build-Depends: dephelper; remove
+    Standards-Version.
+
+ -- Gerrit Pape <pape@smarden.org>  Mon, 22 Mar 2004 14:29:10 +0000
+
+daemontools (0.76-zarge0.2) sarge; urgency=low
+
+  * use diet libc.
+  * debian/rules: set up diet program as c compiler wrapper; conditionally
+    overwrite PATH to have diet program used as c compiler wrapper; minor
+    cleanup.
+  * debian/gcc/gcc*: new; diet program as c compiler wrapper.
+  * debian/control: Build-Depends: dietlibc-dev; no longer Depends:
+    ${shlibs:Depends}.
+
+ -- Gerrit Pape <pape@smarden.org>  Wed, 12 Nov 2003 14:39:11 +0000
+
+daemontools (0.76-woody1) woody; urgency=low
+
+  * bump version for release.
+
+ -- Gerrit Pape <pape@smarden.org>  Tue,  9 Jul 2002 11:05:14 +0200
+
+daemontools (0.76-woody0.1) woody; urgency=low
+
+  * send init a HUP signal in postinst if /command/svscanboot did not
+    exist before; daemontools-run no more does this in that case.
+    This fixes a rarely seen problem when installing a bunch of packages
+    at once and daemontools-run is configured before daemontools is fully
+    installed: init reports SV respawning to fast and disables it for five
+    minutes.
+
+ -- Gerrit Pape <pape@smarden.org>  Sat, 16 Feb 2002 13:58:57 +0100
+
+daemontools (0.76-1) woody; urgency=low
+
+  * new upstream version 0.76.
+  * depends on daemontools-run, just recommends daemontools-doc.
+
+ -- Gerrit Pape <pape@innominate.com>  Wed, 18 Jul 2001 12:02:57 +0200
+
+daemontools (0.70-1) stable; urgency=low
+
+  * 1st debian version, no other changes.
+
+ -- Gerrit Pape <pape@innominate.com>  Thu,  1 Feb 2001 09:46:39 +0100
+
+daemontools (0.70-0.8) unstable; urgency=low
+
+  * binaries are now installed in /usr/local/bin .
+
+ -- Gerrit Pape <pape@innominate.com>  Mon, 18 Dec 2000 10:42:31 +0100
+
+daemontools (0.70-0.7) unstable; urgency=low
+
+  * removed all documentation -> will be in daemontools-doc.
+  * removed init-script, /var/service and /var/log/service -> will be
+    in daemontools-run.
+
+ -- Gerrit Pape <pape@innominate.de>  Mon, 14 Aug 2000 12:05:44 +0200
+
+daemontools (0.70-0.6) unstable; urgency=low
+
+  * lintian fixes.
+
+ -- Gerrit Pape <pape@innominate.de>  Mon, 19 Jun 2000 12:30:19 +0200
+
+daemontools (0.70-0.5) unstable; urgency=low
+
+  * providing /var/log/service/ for multilog directories.
+
+ -- Gerrit Pape <pape@innominate.de>  Tue, 13 Jun 2000 17:14:59 +0200
+
+daemontools (0.70-0.4) unstable; urgency=low
+
+  * init-script added, svscan will be started at boottime, monitoring
+    /var/service.
+
+ -- Gerrit Pape <pape@innominate.de>  Mon, 15 May 2000 11:05:58 +0200
+
+daemontools (0.70-0.3) unstable; urgency=low
+
+  * man-pages added.
+
+ -- Gerrit Pape <pape@innominate.de>  Tue, 25 Apr 2000 09:21:24 +0200
+
+daemontools (0.70-0.1) unstable; urgency=low
+
+  * Initial Release.
+
+ -- Gerrit Pape <pape@innominate.de>  Tue, 18 Apr 2000 11:38:23 +0200
+
+Local variables:
+mode: debian-changelog
+End:

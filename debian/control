@@ -1,0 +1,24 @@
+Source: daemontools
+Section: admin
+Priority: optional
+Maintainer: Gerrit Pape <pape@smarden.org>
+Build-Depends: dietlibc-dev
+
+Package: daemontools
+Architecture: any
+Depends: daemontools-run (>= 0.76.1)
+Recommends: daemontools-doc (>= 0.76-1)
+Description: a collection of tools for managing UNIX services
+ supervise monitors a service. It starts the service and restarts the
+ service if it dies. Setting up a new service is easy: all supervise
+ needs is a directory with a run script that runs the service. 
+ .
+ multilog saves error messages to one or more logs. It optionally timestamps
+ each line and, for each log, includes or excludes lines matching specified
+ patterns. It automatically rotates logs to limit the amount of disk space
+ used. If the disk fills up, it pauses and tries again, without losing any
+ data.
+ .
+ See http://cr.yp.to/daemontools.html for recent informations.
+ .
+ See http://smarden.org/pape/Debian/ for related packages.
