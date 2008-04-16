@@ -2,12 +2,13 @@ Source: daemontools
 Section: admin
 Priority: optional
 Maintainer: Gerrit Pape <pape@smarden.org>
-Build-Depends: dietlibc-dev
+Standards-Version: 3.7.3.0
 
 Package: daemontools
 Architecture: any
-Depends: daemontools-run (>= 0.76.1)
-Recommends: daemontools-doc (>= 0.76-1)
+Suggests: daemontools-run | runit
+Depends: ${shlibs:Depends}
+Replaces: daemontools-doc
 Description: a collection of tools for managing UNIX services
  supervise monitors a service. It starts the service and restarts the
  service if it dies. Setting up a new service is easy: all supervise
@@ -18,7 +19,11 @@ Description: a collection of tools for managing UNIX services
  patterns. It automatically rotates logs to limit the amount of disk space
  used. If the disk fills up, it pauses and tries again, without losing any
  data.
- .
- See http://cr.yp.to/daemontools.html for recent informations.
- .
- See http://smarden.org/pape/Debian/ for related packages.
+
+Package: daemontools-run
+Architecture: all
+Depends: daemontools (>> 1:0.76)
+Conflicts: runit
+Description: daemontools service supervision
+ Starts svscanboot from inittab, and provides the directory /etc/service/
+ for services to be supervised by daemontools.

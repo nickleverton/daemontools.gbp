@@ -7,65 +7,77 @@ endif
 
 DIR =$(shell pwd)/debian/daemontools
 
-configure: deb-checkdir configure-stamp
-configure-stamp:
-	rm -f debian/gcc/gcc
-	sed -e "s}/usr/bin/gcc}`which gcc`}" \
-	  <debian/gcc/gcc.tpl >debian/gcc/gcc
-	chmod 555 debian/gcc/gcc
-	rm -f debian/gcc/cc
-	ln -s gcc debian/gcc/cc
-	touch configure-stamp
+patch: deb-checkdir patch-stamp
+patch-stamp:
+	for i in `ls -1 debian/diff/*.diff || :`; do \
+	  patch -p1 <$$i || exit 1; \
+	done
+	touch patch-stamp
 
 build: deb-checkdir build-stamp
-build-stamp: configure-stamp
+build-stamp: patch-stamp
+	cd daemontools-0.76 && package/compile
 	touch build-stamp
 
 clean: deb-checkdir deb-checkuid
-	rm -rf admin
-	rm -f build-stamp configure-stamp
-	rm -rf '$(DIR)'
-	rm -f debian/gcc/cc
-	rm -f debian/files changelog
+	rm -rf daemontools-0.76/compile daemontools-0.76/command
+	test ! -e patch-stamp || \
+	  for i in `ls -1r debian/diff/*.diff || :`; do patch -p1 -R <$$i; done
+	rm -f patch-stamp build-stamp
+	rm -rf '$(DIR)' '$(DIR)'-run
+	rm -f debian/files debian/substvars changelog
 
-install: deb-checkdir deb-checkuid build-stamp
+install: install-arch install-indep
+install-arch: deb-checkdir deb-checkuid build-stamp
+	# daemontools
 	rm -rf '$(DIR)'
-	install -d -m0755 debian/daemontools/package
-	chmod 1755 debian/daemontools/package
-	install -d -m0755 debian/daemontools/command
-	install -d -m0755 debian/daemontools/usr/local/bin
-	tar xzf daemontools-0.76.tar.gz -C debian/daemontools/package
-	PATH='$(DIR)/../gcc:$(PATH)' sh -c '\
-	cd debian/daemontools/package/admin/daemontools-0.76 && \
-	package/compile && \
-	echo '/package/admin/daemontools-0.76' > compile/home && \
-	rm -f compile/src && \
-	ln -s /package/admin/daemontools-0.76/src compile/src'
-	# links
-	for i in \
-	 `cat '$(DIR)'/package/admin/daemontools-0.76/package/commands`; do \
-	  ln -s /package/admin/daemontools/command/$$i '$(DIR)'/command/$$i \
-	    || exit 1; \
-	  ln -s /command/$$i '$(DIR)'/usr/local/bin/$$i || exit 1; \
-	done
+	#  programs
+	install -d -m0755 '$(DIR)'/usr/bin
+	install -m0755 daemontools-0.76/command/* '$(DIR)'/usr/bin/
 	for i in envdir envuidgid fghack multilog pgrphack readproctitle \
 	 setlock setuidgid softlimit supervise svc svok svscan svstat tai64n \
 	 tai64nlocal; do \
-	  $(STRIP) -R .comment -R .note \
-	    '$(DIR)'/package/admin/daemontools-0.76/command/$$i || exit 1; \
+	  $(STRIP) -R .comment -R .note '$(DIR)'/usr/bin/$$i || exit 1; \
 	done
-	# changelog
-	rm -f changelog && \
-	  ln -s '$(DIR)'/package/admin/daemontools-0.76/src/CHANGES changelog
+	sed -e 's}/command/svc}svc};s}/service}/etc/service}g' \
+	  <'$(DIR)'/usr/bin/svscanboot >'$(DIR)'/usr/bin/svscanboot'{new}'
+	cat '$(DIR)'/usr/bin/svscanboot'{new}' >'$(DIR)'/usr/bin/svscanboot
+	rm -f '$(DIR)'/usr/bin/svscanboot'{new}'
+	#  manpages
+	install -d -m0755 '$(DIR)'/usr/share/man/man8
+	for i in debian/daemontools-man/*.8; do \
+	  install -m0644 $$i '$(DIR)'/usr/share/man/man8/ && \
+	  gzip -9 '$(DIR)'/usr/share/man/man8/$${i##*/} || exit 1; \
+	done
+	#  changelog
+	test -r changelog || ln -s daemontools-0.76/src/CHANGES changelog
+install-indep: deb-checkdir deb-checkuid
+	# daemontools-run
+	rm -rf '$(DIR)'-run
+	install -d -m0755 '$(DIR)'-run/etc/service
+	install -d -m0755 '$(DIR)'-run/var/lib/supervise
+	#  update-service
+	install -d -m0755 '$(DIR)'-run/usr/sbin
+	install -m0755 debian/update-service \
+	  '$(DIR)'-run/usr/sbin/update-service
+	install -d -m0755 '$(DIR)'-run/usr/share/man/man8
+	install -m0644 debian/update-service.8 '$(DIR)'-run/usr/share/man/man8/
+	gzip -9 '$(DIR)'-run/usr/share/man/man8/update-service.8
+	#  changelog
+	test -r changelog || ln -s daemontools-0.76/src/CHANGES changelog
 
-binary-indep:
-
-binary-arch: install daemontools.deb
+binary: binary-arch binary-indep
+binary-arch: install-arch daemontools.deb
+	dpkg-shlibdeps '$(DIR)'/usr/bin/*
 	dpkg-gencontrol -isp -pdaemontools -P'$(DIR)'
 	dpkg -b '$(DIR)' ..
+binary-indep: install-indep daemontools-run.deb
+	dpkg-gencontrol -isp -pdaemontools-run -P'$(DIR)'-run
+	dpkg -b '$(DIR)'-run ..
 
 binary: binary-indep binary-arch
 
-.PHONY: configure build clean install binary-indep binary-arch binary
+.PHONY: patch build clean install install-arch install-indep binary \
+	  binary-arch binary-indep
 
 include debian/implicit
