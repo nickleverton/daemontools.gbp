@@ -1,0 +1,15 @@
+Description: Remove 16Mb limit from multilog "s" logsize parameter
+Author: Nick Leverton <nick@leverton.org>
+Origin: other
+Forwarded: no
+
+--- a/daemontools-0.76/src/multilog.c	Mon Aug  9 12:36:35 2004
++++ b/daemontools-0.76/src/multilog.c	Mon Aug  9 12:36:54 2004
+@@ -399,6 +400,6 @@
+       scan_ulong(script[i] + 1,&size);
+       if (size < 4096) size = 4096;
+-      if (size > 16777215) size = 16777215;
++      /* if (size > 16777215) size = 16777215; */
+     }
+     else if (script[i][0] == 'n') {
+       scan_ulong(script[i] + 1,&num);

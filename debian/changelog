@@ -1,3 +1,12 @@
+daemontools (1:0.76-3.0~0njl.0) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * Add new patches: sigq12.patch (by Scott Gifford and thedjbway.org)
+    and remove multilog maxsize (by myself).
+  * Build with hardening, and let non-stripped builds work.
+
+ -- Nick Leverton <nick@leverton.org>  Sat, 09 Mar 2013 12:23:29 +0000
+
 daemontools (1:0.76-3) unstable; urgency=low
 
   * debian/daemontools-run.postinst: don't exec into the kill program, so

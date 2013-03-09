@@ -1,5 +1,12 @@
 #!/usr/bin/make -f
 
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+
+CPPFLAGS_DEF += `dpkg-buildflags --get CPPFLAGS`
+CFLAGS_DEF += `dpkg-buildflags --get CFLAGS`
+LDFLAGS_DEF += `dpkg-buildflags --get LDFLAGS`
+SRCDIR = daemontools-0.76/src
+
 STRIP =strip
 ifneq (,$(findstring nostrip,$(DEB_BUILD_OPTIONS)))
   STRIP =: nostrip
@@ -16,6 +23,10 @@ patch-stamp:
 
 build: deb-checkdir build-stamp
 build-stamp: patch-stamp
+	test -r $(SRCDIR)/conf-cc'{orig}' || cp $(SRCDIR)/conf-cc $(SRCDIR)/conf-cc'{orig}'
+	echo 'gcc $(CPPFLAGS_DEF) $(CFLAGS_DEF) -include /usr/include/errno.h' >$(SRCDIR)/conf-cc
+	test -r $(SRCDIR)/conf-ld'{orig}' || cp $(SRCDIR)/conf-ld $(SRCDIR)/conf-ld'{orig}'
+	echo 'gcc $(LDFLAGS_DEF)' >$(SRCDIR)/conf-ld
 	cd daemontools-0.76 && package/compile
 	touch build-stamp
 
@@ -26,6 +37,8 @@ clean: deb-checkdir deb-checkuid
 	rm -f patch-stamp build-stamp
 	rm -rf '$(DIR)' '$(DIR)'-run
 	rm -f debian/files debian/substvars changelog
+	test ! -r $(SRCDIR)/conf-cc'{orig}' || mv $(SRCDIR)/conf-cc'{orig}' $(SRCDIR)/conf-cc
+	test ! -r $(SRCDIR)/conf-ld'{orig}' || mv $(SRCDIR)/conf-ld'{orig}' $(SRCDIR)/conf-ld
 
 install: install-arch install-indep
 install-arch: deb-checkdir deb-checkuid build-stamp
