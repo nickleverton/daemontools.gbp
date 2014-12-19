@@ -78,6 +78,8 @@ case "$opt" in
     rm -f "$servicedir"/"$sv"
     svc -dx "$svdir" ||
       fatal "Unable to send the service $sv the down and exit commands."
+    test ! -d "$svdir/log" || svc -dx "$svdir/log" ||
+      fatal "Unable to send the log service of $sv the down and exit commands."
     printf '%s %s\n' \
       "Service $sv removed," \
       "the service daemon received the TERM and CONT signals."

@@ -2,10 +2,11 @@ Source: daemontools
 Section: admin
 Priority: optional
 Maintainer: Gerrit Pape <pape@smarden.org>
-Standards-Version: 3.7.3.0
+Standards-Version: 3.9.5.0
 
 Package: daemontools
 Architecture: any
+Multi-Arch: foreign
 Suggests: daemontools-run | runit
 Depends: ${shlibs:Depends}
 Replaces: daemontools-doc

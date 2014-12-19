@@ -3,6 +3,14 @@ set -e
 
 test "$1" = 'configure' || exit 0
 
+# workaround #767933
+# copy from sysvinit-2.88dsf/debian/sysvinit-core.postinst and adjust
+if [ ! -f /etc/inittab ]
+then
+        cp -p /usr/share/daemontools-run/inittab /etc/inittab
+fi
+# end copy from sysvinit-2.88dsf
+
 if test -z "$2" || dpkg --compare-versions "$2" lt '1:0.76'; then
   test -n "$(ls -1 /etc/service/)" ||
     for i in /var/service /service /var/lib/svscan; do
@@ -74,3 +82,10 @@ if ! grep '^SV:' /etc/inittab >/dev/null; then
   mv -f /etc/inittab'{new}' /etc/inittab
   kill -s HUP 1
 fi
+
+# systemd service
+test -h /etc/systemd/system/multi-user.target.wants/daemontools.service ||
+  test ! -d /etc/systemd/system/multi-user.target.wants ||
+    ln -s /lib/systemd/system/daemontools.service \
+      /etc/systemd/system/multi-user.target.wants/
+test ! -d /run/systemd/system || systemctl start daemontools.service

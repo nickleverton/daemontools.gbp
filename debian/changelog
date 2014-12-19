@@ -1,3 +1,38 @@
+daemontools (1:0.76-6) unstable; urgency=medium
+
+  * workaround #767933 by copying from sysvinit-2.88dsf:
+    * debian/share/inittab*: new; copy from sysvinit-2.88dsf.
+    * debian/rules: daemontools-run: copy and adjust code from
+      sysvinit-2.88dsf to install possibly arch-specific inittab into
+      /usr/share/daemontools-run/.
+    * debian/daemontools-run.postinst: copy and adjust code from
+      sysvinit-2.88dsf to create initial /etc/inittab (closes: #767933).
+
+ -- Gerrit Pape <pape@smarden.org>  Fri, 19 Dec 2014 00:17:53 +0000
+
+daemontools (1:0.76-5) unstable; urgency=low
+
+  * debian/update-service: apply patch from Robert Sander (slightly
+    modified): update-service --remove stops appendant log service if
+    subdirectory ./log/ exists in the service directory (thx Konstantin
+    Khomoutov, Robert Sander, closes: #554791).
+  * debian/control: Package: daemontools: mark it Multi-Arch: foreign
+    (closes: #712624).
+  * debian/control: Standards-Version: 3.9.5.0.
+
+ -- Gerrit Pape <pape@smarden.org>  Thu, 31 Jul 2014 10:28:57 +0000
+
+daemontools (1:0.76-4) unstable; urgency=low
+
+  * debian/systemd/daemontools.service: new; daemontools-run systemd unit
+    file (thx Michael Biebl, Jonathan de Boyne Pollard, Milan P. Stanic).
+  * debian/rules: install daemontools-run systemd unit file.
+  * debian/daemontools-run.postinst, debian/daemontools-run.postrm: enable
+    and start, disable and stop respectively, daemontools unit if systemd
+    is process 1 (closes: #752075).
+
+ -- Gerrit Pape <pape@smarden.org>  Sat, 26 Jul 2014 09:58:37 +0000
+
 daemontools (1:0.76-3) unstable; urgency=low
 
   * debian/daemontools-run.postinst: don't exec into the kill program, so

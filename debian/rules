@@ -63,6 +63,30 @@ install-indep: deb-checkdir deb-checkuid
 	install -d -m0755 '$(DIR)'-run/usr/share/man/man8
 	install -m0644 debian/update-service.8 '$(DIR)'-run/usr/share/man/man8/
 	gzip -9 '$(DIR)'-run/usr/share/man/man8/update-service.8
+	#  systemd service
+	install -d -m0755 '$(DIR)'-run/lib/systemd/system
+	install -m0644 debian/systemd/daemontools.service \
+	  '$(DIR)'-run/lib/systemd/system/
+
+	#  workaround #767933
+	install -d -m0755 '$(DIR)'-run/usr/share/daemontools-run
+	#  copy from sysvinit-2.88dsf/debian/rules and adjust
+	if test -e debian/share/inittab.$(DEB_HOST_GNU_TYPE) ; \
+	then \
+		install -m0644 \
+			debian/share/inittab.$(DEB_HOST_GNU_TYPE) \
+			'$(DIR)'-run/usr/share/daemontools-run/inittab ; \
+	elif test -e debian/share/inittab.$(DEB_HOST_GNU_SYSTEM) ; \
+	then \
+		install -m0644 \
+			debian/share/inittab.$(DEB_HOST_GNU_SYSTEM) \
+			'$(DIR)'-run/usr/share/daemontools-run/inittab ; \
+	else \
+		install -m0644 debian/share/inittab \
+			'$(DIR)'-run/usr/share/daemontools-run/inittab ; \
+	fi
+	#  end copy from sysvinit-2.88dsf
+
 	#  changelog
 	test -r changelog || ln -s daemontools-0.76/src/CHANGES changelog
 
