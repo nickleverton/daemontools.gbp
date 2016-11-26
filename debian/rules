@@ -7,6 +7,8 @@ endif
 
 DIR =$(shell pwd)/debian/daemontools
 
+BUILD_DATE := $(shell dpkg-parsechangelog --show-field Date)
+
 patch: deb-checkdir patch-stamp
 patch-stamp:
 	for i in `ls -1 debian/diff/*.diff || :`; do \
@@ -14,6 +16,8 @@ patch-stamp:
 	done
 	touch patch-stamp
 
+build-arch: build
+build-indep: build
 build: deb-checkdir build-stamp
 build-stamp: patch-stamp
 	cd daemontools-0.76 && package/compile
@@ -47,7 +51,7 @@ install-arch: deb-checkdir deb-checkuid build-stamp
 	install -d -m0755 '$(DIR)'/usr/share/man/man8
 	for i in debian/daemontools-man/*.8; do \
 	  install -m0644 $$i '$(DIR)'/usr/share/man/man8/ && \
-	  gzip -9 '$(DIR)'/usr/share/man/man8/$${i##*/} || exit 1; \
+	  gzip -9n '$(DIR)'/usr/share/man/man8/$${i##*/} || exit 1; \
 	done
 	#  changelog
 	test -r changelog || ln -s daemontools-0.76/src/CHANGES changelog
@@ -62,7 +66,7 @@ install-indep: deb-checkdir deb-checkuid
 	  '$(DIR)'-run/usr/sbin/update-service
 	install -d -m0755 '$(DIR)'-run/usr/share/man/man8
 	install -m0644 debian/update-service.8 '$(DIR)'-run/usr/share/man/man8/
-	gzip -9 '$(DIR)'-run/usr/share/man/man8/update-service.8
+	gzip -9n '$(DIR)'-run/usr/share/man/man8/update-service.8
 	#  systemd service
 	install -d -m0755 '$(DIR)'-run/lib/systemd/system
 	install -m0644 debian/systemd/daemontools.service \
@@ -94,14 +98,18 @@ binary: binary-arch binary-indep
 binary-arch: install-arch daemontools.deb
 	dpkg-shlibdeps '$(DIR)'/usr/bin/*
 	dpkg-gencontrol -isp -pdaemontools -P'$(DIR)'
+	find '$(DIR)' -newermt '$(BUILD_DATE)' -print0 | \
+		xargs -0r touch --no-dereference --date='$(BUILD_DATE)'
 	dpkg -b '$(DIR)' ..
 binary-indep: install-indep daemontools-run.deb
 	dpkg-gencontrol -isp -pdaemontools-run -P'$(DIR)'-run
+	find '$(DIR)'-run -newermt '$(BUILD_DATE)' -print0 | \
+		xargs -0r touch --no-dereference --date='$(BUILD_DATE)'
 	dpkg -b '$(DIR)'-run ..
 
 binary: binary-indep binary-arch
 
-.PHONY: patch build clean install install-arch install-indep binary \
+.PHONY: patch build build-arch build-indep clean install install-arch install-indep binary \
 	  binary-arch binary-indep
 
 include debian/implicit

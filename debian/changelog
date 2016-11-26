@@ -1,3 +1,23 @@
+daemontools (1:0.76-6.1) unstable; urgency=medium
+
+  [ Jan Mojzis ]
+  * Non-maintainer upload.
+  * supervise.c: restart the monitored process when
+    fork(2) fails (Closes: #819036)
+  * d/rules: fix mtimes before building binary package to produce
+    reproducible output (Closes: #793003) (Closes: #776876)
+  * d/rules: do not FTBFS with dpkg-buildpackage -A (thx Santiago
+    Vila) (Closes: #831921)
+  * d/implicit: fixed md5sums permissions 0664 -> 0644
+  * d/control: bump to standards-version 3.9.8
+  * d/control: fixed the description
+
+  [ Dr. Tobias Quathamer ]
+  * New upload with all changes from Jan, his previous NMU
+    to DELAYED/5 did not end up in unstable.
+
+ -- Dr. Tobias Quathamer <toddy@debian.org>  Sun, 27 Nov 2016 00:26:56 +0100
+
 daemontools (1:0.76-6) unstable; urgency=medium
 
   * workaround #767933 by copying from sysvinit-2.88dsf:
@@ -239,4 +259,3 @@ daemontools (0.70-0.1) unstable; urgency=low
   * Initial Release.
 
  -- Gerrit Pape <pape@innominate.de>  Tue, 18 Apr 2000 11:38:23 +0200
-
