@@ -87,7 +87,7 @@ deb-checkuid:
 	: debian/$*/DEBIAN/md5sums
 	@rm -f debian/$*/DEBIAN/md5sums
 	@cd debian/$* && find * -path 'DEBIAN' -prune -o \
-	  -type f -exec md5sum {} >>DEBIAN/md5sums \;
+	  -type f -exec md5sum {} \; | LC_ALL=C sort >>DEBIAN/md5sums
 	@chmod 644 debian/$*/DEBIAN/md5sums
 %.deb-DEBIAN: %.deb-checkdir %.deb-DEBIAN-base %.deb-DEBIAN-scripts \
 	  %.deb-DEBIAN-md5sums

@@ -1,3 +1,14 @@
+daemontools (1:0.76-7) unstable; urgency=medium
+
+  [ Gianfranco Costamagna ]
+  * QA upload.
+
+  [ Jan Mojžíš ]
+  * d/implicit: sorted DEBIAN/md5sums to produce reproducible
+    output (Closes: #854145)
+
+ -- Jan Mojžíš <jan.mojzis@gmail.com>  Mon, 29 Oct 2018 08:35:17 +0100
+
 daemontools (1:0.76-6.1) unstable; urgency=medium
 
   [ Jan Mojzis ]
