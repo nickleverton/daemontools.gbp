@@ -1,0 +1,2 @@
+version=4
+  https://cr.yp.to/daemontools/install.html daemontools-(.+)\.tar\.gz

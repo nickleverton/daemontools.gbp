@@ -1,0 +1,3 @@
+0001-error.h-include-errno.h-instead-of-extern-int-errno.patch
+0002-supervise.c-.-supervise-may-be-a-symlink-if-it-s-dan.patch
+0003-supervise.c-restart-process-when-fork-fails.patch

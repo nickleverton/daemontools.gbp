@@ -1,0 +1,17 @@
+#!/bin/sh
+# 20210207
+# Jan Mojzis
+# Public domain.
+
+set -e
+
+dir=`dirname "$0"`
+
+# change directory to $AUTOPKGTEST_TMP
+cd "${AUTOPKGTEST_TMP}"
+
+env - /bin/sh "${dir}/shortrts.tests" 2>&1 | cat -v > shortrts.out
+
+diff -Nur "${dir}/shortrts.exp" shortrts.out
+
+exit 0

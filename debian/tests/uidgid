@@ -1,0 +1,28 @@
+#!/bin/sh
+# 20210207
+# Jan Mojzis
+# Public domain.
+
+set -e
+
+# change directory to $AUTOPKGTEST_TMP
+cd "${AUTOPKGTEST_TMP}"
+
+if [ x"`id nobody -u`" != x"`setuidgid nobody id -u`" ]; then
+  echo "id nobody -u != setuidgid nobody id -u" >&2
+  exit 1
+fi
+if [ x"`id nobody -g`" != x"`setuidgid nobody id -g`" ]; then
+  echo "id nobody -g != setuidgid nobody id -g" >&2
+  exit 1
+fi
+if [ x"`id nobody -u`" != x"`envuidgid nobody printenv UID`" ]; then
+  echo "id nobody -u != envuidgid nobody printenv UID" >&2
+  exit 1
+fi
+if [ x"`id nobody -g`" != x"`envuidgid nobody printenv GID`" ]; then
+  echo "id nobody -g != envuidgid nobody printenv GID" >&2
+  exit 1
+fi
+
+exit 0

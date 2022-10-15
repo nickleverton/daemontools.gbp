@@ -1,0 +1,21 @@
+#!/bin/sh
+set -e
+
+# upgrading from version < 1:0.76-8
+if [ x"$1" = "xupgrade" ] && [ x"$2" != "x" ]; then
+  if dpkg --compare-versions "$2" lt '1:0.76-8'; then
+    # stop and remove OLD systemd service
+    if deb-systemd-invoke is-active daemontools.service >/dev/null; then
+      deb-systemd-invoke stop daemontools.service
+    fi
+    deb-systemd-invoke disable daemontools.service 2>/dev/null || :
+
+    echo 'Sending services the TERM and CONT signals...'
+    svc -dx /etc/service/* || :
+    sleep 5
+    echo 'Sending log services the TERM and CONT signals...'
+    svc -dx /etc/service/*/log || :
+  fi
+fi
+
+#DEBHELPER#

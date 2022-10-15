@@ -1,0 +1,18 @@
+Tests: uidgid
+Depends: daemontools,
+Restrictions: needs-root
+
+Tests: shortrts
+Depends: daemontools,
+
+Tests: daemontools-run-systemd
+Depends: daemontools-run,
+         psmisc,
+         systemd,
+Restrictions: isolation-container, needs-root, needs-reboot
+
+Tests: daemontools-run-sysvinit
+Depends: daemontools-run,
+         psmisc,
+         sysvinit-core,
+Restrictions: isolation-machine, needs-root, needs-reboot
