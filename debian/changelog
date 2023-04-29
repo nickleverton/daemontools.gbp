@@ -1,11 +1,67 @@
-daemontools (1:0.76-3.0~0njl.0) unstable; urgency=low
+daemontools (1:0.76-6.1~0njl8+1) jessie-backports; urgency=medium
 
   * Non-maintainer upload.
+  * Build for jessie.
   * Add new patches: sigq12.patch (by Scott Gifford and thedjbway.org)
     and remove multilog maxsize (by myself).
   * Build with hardening, and let non-stripped builds work.
 
- -- Nick Leverton <nick@leverton.org>  Sat, 09 Mar 2013 12:23:29 +0000
+ -- Nick Leverton <nick@leverton.org>  Wed, 31 Jan 2018 23:37:40 +0000
+
+daemontools (1:0.76-6.1) unstable; urgency=medium
+
+  [ Jan Mojzis ]
+  * Non-maintainer upload.
+  * supervise.c: restart the monitored process when
+    fork(2) fails (Closes: #819036)
+  * d/rules: fix mtimes before building binary package to produce
+    reproducible output (Closes: #793003) (Closes: #776876)
+  * d/rules: do not FTBFS with dpkg-buildpackage -A (thx Santiago
+    Vila) (Closes: #831921)
+  * d/implicit: fixed md5sums permissions 0664 -> 0644
+  * d/control: bump to standards-version 3.9.8
+  * d/control: fixed the description
+
+  [ Dr. Tobias Quathamer ]
+  * New upload with all changes from Jan, his previous NMU
+    to DELAYED/5 did not end up in unstable.
+
+ -- Dr. Tobias Quathamer <toddy@debian.org>  Sun, 27 Nov 2016 00:26:56 +0100
+
+daemontools (1:0.76-6) unstable; urgency=medium
+
+  * workaround #767933 by copying from sysvinit-2.88dsf:
+    * debian/share/inittab*: new; copy from sysvinit-2.88dsf.
+    * debian/rules: daemontools-run: copy and adjust code from
+      sysvinit-2.88dsf to install possibly arch-specific inittab into
+      /usr/share/daemontools-run/.
+    * debian/daemontools-run.postinst: copy and adjust code from
+      sysvinit-2.88dsf to create initial /etc/inittab (closes: #767933).
+
+ -- Gerrit Pape <pape@smarden.org>  Fri, 19 Dec 2014 00:17:53 +0000
+
+daemontools (1:0.76-5) unstable; urgency=low
+
+  * debian/update-service: apply patch from Robert Sander (slightly
+    modified): update-service --remove stops appendant log service if
+    subdirectory ./log/ exists in the service directory (thx Konstantin
+    Khomoutov, Robert Sander, closes: #554791).
+  * debian/control: Package: daemontools: mark it Multi-Arch: foreign
+    (closes: #712624).
+  * debian/control: Standards-Version: 3.9.5.0.
+
+ -- Gerrit Pape <pape@smarden.org>  Thu, 31 Jul 2014 10:28:57 +0000
+
+daemontools (1:0.76-4) unstable; urgency=low
+
+  * debian/systemd/daemontools.service: new; daemontools-run systemd unit
+    file (thx Michael Biebl, Jonathan de Boyne Pollard, Milan P. Stanic).
+  * debian/rules: install daemontools-run systemd unit file.
+  * debian/daemontools-run.postinst, debian/daemontools-run.postrm: enable
+    and start, disable and stop respectively, daemontools unit if systemd
+    is process 1 (closes: #752075).
+
+ -- Gerrit Pape <pape@smarden.org>  Sat, 26 Jul 2014 09:58:37 +0000
 
 daemontools (1:0.76-3) unstable; urgency=low
 
@@ -213,4 +269,3 @@ daemontools (0.70-0.1) unstable; urgency=low
   * Initial Release.
 
  -- Gerrit Pape <pape@innominate.de>  Tue, 18 Apr 2000 11:38:23 +0200
-

@@ -16,3 +16,9 @@ if grep -q "#-- daemontools-run begin" /etc/inittab; then
   echo 'Sending log services the TERM and CONT signals...'
   svc -dx /etc/service/*/log || :
 fi
+
+# systemd service
+test ! -d /run/systemd/system ||
+  ! systemctl is-active daemontools.service >/dev/null ||
+    systemctl stop daemontools.service
+rm -f /etc/systemd/system/multi-user.target.wants/daemontools.service
