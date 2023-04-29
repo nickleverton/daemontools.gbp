@@ -1,0 +1,5 @@
+# Daemontools software doesn't have manual pages.
+# The man-pages in debian/daemontools-man directory were created from djb's 
+# documentation found at http://cr.yp.to/daemontools.html
+# by G. Pape <pape@smarden.org>
+maintainer-manual-page *

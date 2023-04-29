@@ -1,0 +1,77 @@
+#!/bin/sh
+# 20180208
+# Jan Mojzis
+# Public domain.
+
+set -e
+
+dir=`dirname "$0"`
+
+# change directory to $AUTOPKGTEST_TMP
+cd "${AUTOPKGTEST_TMP}"
+
+# run service and reboot
+if [ x"${AUTOPKGTEST_REBOOT_MARK}" = x ]; then
+  ln -s "${dir}/daemontools-run.testservice" /etc/service/daemontools-run.testservice
+  /tmp/autopkgtest-reboot rebootmark
+fi
+
+cleanup() {
+  ex=$?
+  if [ "${ex}" -ne 0 ]; then
+    (
+      exec >&2
+      echo "id:"
+      id || :
+      echo
+      echo "systemctl status daemontools-run:"
+      systemctl status daemontools-run || :
+      echo
+      echo "journalctl -x --no-tail --no-pager"
+      journalctl -x --no-tail --no-pager || :
+      echo "daemontools-run test failed !!!"
+    )
+  fi
+  if [ -h /etc/service/daemontools-run.testservice ]; then
+    cd /etc/service/daemontools-run.testservice
+    rm  /etc/service/daemontools-run.testservice
+    svc -dx .
+  fi
+  exit "${ex}"
+}
+trap "cleanup" EXIT TERM INT
+
+for timeout in 10 1 3 5 11; do
+  sleep "${timeout}"
+  echo "sleeping ${timeout} seconds"
+  systemctl is-active daemontools-run.service && break
+  if [ x"${timeout}" = x11 ]; then
+    echo "systemd service daemontools-run.service not running" >&2
+    exit 2
+  fi
+done
+
+if ! svok /etc/service/daemontools-run.testservice; then
+  echo "daemontools service /etc/service/daemontools-run.testservice not running" >&2
+  exit 3
+fi
+
+echo "svstat /etc/service/daemontools-run.testservice:"
+svstat /etc/service/daemontools-run.testservice 2>&1
+echo
+
+echo "svc -d /etc/service/daemontools-run.testservice"
+svc -d /etc/service/daemontools-run.testservice
+sleep 1
+echo
+
+echo "svstat /etc/service/daemontools-run.testservice:"
+svstat /etc/service/daemontools-run.testservice 2>&1
+echo
+
+# print processes
+echo "pstree:"
+pstree
+echo
+
+exit 0

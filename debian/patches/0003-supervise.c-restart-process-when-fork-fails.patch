@@ -1,0 +1,42 @@
+From: =?utf-8?b?SmFuIE1vasW+w63FoQ==?= <jan.mojzis@gmail.com>
+Date: Sun, 7 Feb 2021 22:33:42 +0100
+Subject: supervise.c restart process when fork fails
+Forwarded: no
+
+---
+ daemontools-0.76/src/supervise.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/daemontools-0.76/src/supervise.c b/daemontools-0.76/src/supervise.c
+index f43cabf..49b4fa5 100644
+--- a/daemontools-0.76/src/supervise.c
++++ b/daemontools-0.76/src/supervise.c
+@@ -86,6 +86,8 @@ void trigger(void)
+ 
+ const char *run[2] = { "./run", 0 };
+ 
++int flagfailed = 0;
++
+ void trystart(void)
+ {
+   int f;
+@@ -94,6 +96,7 @@ void trystart(void)
+     case -1:
+       strerr_warn4(WARNING,"unable to fork for ",dir,", sleeping 60 seconds: ",&strerr_sys);
+       deepsleep(60);
++      flagfailed = 1;
+       trigger();
+       return;
+     case 0:
+@@ -153,6 +156,11 @@ void doit(void)
+       }
+     }
+ 
++    if (flagfailed && flagwant && flagwantup){
++      flagfailed = 0;
++      trystart();
++    }
++
+     if (read(fdcontrol,&ch,1) == 1)
+       switch(ch) {
+ 	case 'd':

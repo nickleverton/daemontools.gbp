@@ -1,12 +1,58 @@
-daemontools (1:0.76-6.1~0njl8+1) jessie-backports; urgency=medium
+daemontools (1:0.76-8.1~njl9+1) stretch-backports; urgency=medium
 
-  * Non-maintainer upload.
-  * Build for jessie.
+  * Rebuild for stretch-backports.
+  * Reduce debhelper-compat to 12 for stretch-bpo.
   * Add new patches: sigq12.patch (by Scott Gifford and thedjbway.org)
     and remove multilog maxsize (by myself).
-  * Build with hardening, and let non-stripped builds work.
 
- -- Nick Leverton <nick@leverton.org>  Wed, 31 Jan 2018 23:37:40 +0000
+ -- Nick Leverton <nick@leverton.org>  Wed, 12 Apr 2023 22:28:56 +0100
+
+daemontools (1:0.76-8.1) unstable; urgency=medium
+
+  * Non-maintainer upload.
+  * No source change upload to rebuild with debhelper 13.10.
+
+ -- Michael Biebl <biebl@debian.org>  Sat, 15 Oct 2022 11:58:28 +0200
+
+daemontools (1:0.76-8) unstable; urgency=medium
+
+  * New maintainer Joost van Baal-Ilić (Closes: #1006908)
+  * New uploader Jan Mojžíš
+  * debian/*: rework from scratch using debhelper:
+    created d/daemontools.{docs,install,manpages,NEWS},
+    created d/daemontools-run.{docs,install,postinst,preinst,postrm,manpages},
+    removed share/inittab* files
+  * d/daemontools-run.post{inst,rm}: use 'init q' instead of 'kill' to reload
+    inittab in sysvinit mode (Closes: #474141) (Closes: 922783) (Closes: 494661)
+  * d/control: add Build-Depends, Vcs-Git, Vcs-Browser, Homepage
+  * d/control: debhelper-compat 13
+  * d/control: added Depends: ${misc:Depends}
+  * d/control: added Rules-Requires-Root: no
+  * d/control: bump to Standards-Version 4.6.0
+  * d/copyright: switched to dep5 format
+  * d/daemontools-run.service: added Documentation
+  * d/watch added
+  * d/tests/shortrts: autopkgtest added
+  * d/tests/uidgid: autopkgtest added
+  * d/tests/daemontools-run-systemd added
+  * d/tests/daemontools-run-sysvinit added
+  * d/patches rework: d/diff moved to d/patches:
+    0001-error.h-include-errno.h-instead-of-extern-int-errno.patch
+    0002-supervise.c-.-supervise-may-be-a-symlink-if-it-s-dan.patch
+    0003-supervise.c-restart-process-when-fork-fails.patch
+
+ -- Jan Mojžíš <jan.mojzis@gmail.com>  Sun, 07 Feb 2021 00:39:14 +0100
+
+daemontools (1:0.76-7) unstable; urgency=medium
+
+  [ Gianfranco Costamagna ]
+  * QA upload.
+
+  [ Jan Mojžíš ]
+  * d/implicit: sorted DEBIAN/md5sums to produce reproducible
+    output (Closes: #854145)
+
+ -- Jan Mojžíš <jan.mojzis@gmail.com>  Mon, 29 Oct 2018 08:35:17 +0100
 
 daemontools (1:0.76-6.1) unstable; urgency=medium
 

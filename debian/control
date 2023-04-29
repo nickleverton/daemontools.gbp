@@ -1,19 +1,26 @@
 Source: daemontools
 Section: admin
 Priority: optional
-Maintainer: Gerrit Pape <pape@smarden.org>
-Standards-Version: 3.9.8
+Maintainer: Joost van Baal-Ilić <joostvb@debian.org>
+Uploaders: Jan Mojžíš <jan.mojzis@gmail.com>
+Standards-Version: 4.6.0
+Homepage: https://cr.yp.to/daemontools.html
+Build-Depends: debhelper-compat (= 12),
+Vcs-Git: https://salsa.debian.org/debian/daemontools.git
+Vcs-Browser: https://salsa.debian.org/debian/daemontools
+Rules-Requires-Root: no
 
 Package: daemontools
 Architecture: any
 Multi-Arch: foreign
-Suggests: daemontools-run | runit
-Depends: ${shlibs:Depends}
-Replaces: daemontools-doc
+Suggests: daemontools-run | runit,
+Depends: ${misc:Depends},
+         ${shlibs:Depends},
+Replaces: daemontools-doc,
 Description: collection of tools for managing UNIX services
  supervise monitors a service. It starts the service and restarts the
  service if it dies. Setting up a new service is easy: all supervise
- needs is a directory with a run script that runs the service. 
+ needs is a directory with a run script that runs the service.
  .
  multilog saves error messages to one or more logs. It optionally timestamps
  each line and, for each log, includes or excludes lines matching specified
@@ -23,8 +30,9 @@ Description: collection of tools for managing UNIX services
 
 Package: daemontools-run
 Architecture: all
-Depends: daemontools (>> 1:0.76)
-Conflicts: runit
+Depends: daemontools (>> 1:0.76),
+         ${misc:Depends},
+Conflicts: runit,
 Description: daemontools service supervision
  Starts svscanboot from inittab, and provides the directory /etc/service/
  for services to be supervised by daemontools.

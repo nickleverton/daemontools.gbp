@@ -1,11 +1,12 @@
-From 7ee585cab1d5b68f804a5601a66ae87799c8a7c3 Mon Sep 17 00:00:00 2001
 From: Gerrit Pape <pape@smarden.org>
 Date: Sun, 24 Feb 2008 10:54:26 +0000
-Subject: [PATCH] supervise.c: ./supervise may be a symlink, if it's dangling, create link target
+Subject: supervise.c: ./supervise may be a symlink, if it's dangling,
+ create link target
+Forwarded: no
 
 ---
- daemontools-0.76/src/supervise.c |   17 ++++++++++++++++-
- 1 files changed, 16 insertions(+), 1 deletions(-)
+ daemontools-0.76/src/supervise.c | 17 ++++++++++++++++-
+ 1 file changed, 16 insertions(+), 1 deletion(-)
 
 diff --git a/daemontools-0.76/src/supervise.c b/daemontools-0.76/src/supervise.c
 index 2482ad2..f43cabf 100644
@@ -42,6 +43,3 @@ index 2482ad2..f43cabf 100644
    fdlock = open_append("supervise/lock");
    if ((fdlock == -1) || (lock_exnb(fdlock) == -1))
      strerr_die4sys(111,FATAL,"unable to acquire ",dir,"/supervise/lock: ");
--- 
-1.5.4.2
-
